@@ -189,7 +189,7 @@ def compile(args):
             _filename, _ext = os.path.splitext(_file)
             if _ext == '.qrc':
                 designer_qrc_files.append(_filename)
-                log(f'Compilando "{resource_file}.qrc"')
+                log(f'Compilando "{_filename}.qrc"')
                 os.system(f'pyrcc5 {os.path.join(RESOURCES_PATH, f"{_filename}.qrc")} -o {os.path.join(RESOURCES_COMPILED_PATH, f"{_filename}_rc.py")}')
         log(f'Se compilaron {len(designer_qrc_files)} archivos *.qrc')
 
