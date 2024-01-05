@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="button_images">
+    <file>../assets/mas_simb.png</file>
+  </qresource>
+</RCC>
