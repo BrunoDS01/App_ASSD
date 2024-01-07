@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
+from src.Predict_U_Net import predictWithU_Net
 
 # Other modules
 import numpy as np
@@ -38,7 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.songAddressList.append(file_path)
 
-        self.songsListWidget.addItem(str(len(self.songNamesList) - 1) + ' - ' + filename)
+        self.songsListWidget.addItem(str(len(self.songAddressList) - 1) + ' - ' + filename)
 
 
     def processSong(self):
@@ -48,11 +49,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.chosenNet = self.chooseNetComboBox.currentIndex()
         numberOfSong = self.songsListWidget.currentRow()
         self.chosenSongAdress = self.songAddressList[numberOfSong]
-
-        print(self.chosenSongAdress)
+        
 
         if self.chosenNet == 0:
-            self.processWithU_Net()
+            predictWithU_Net(self.chosenSongAdress)
         
         elif self.choseNet == 1:
             self.processWithOpen_Unmix()
@@ -66,6 +66,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             - Drums
             - Others
         """
+        return 0
 
 
 
