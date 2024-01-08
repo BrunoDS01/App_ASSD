@@ -1,5 +1,8 @@
 # PyQt5 modules
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtCore import QBuffer, QByteArray, QIODevice
+from PyQt5.QtCore import QUrl
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
@@ -17,17 +20,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
+        #############################################################################
         # Members
+        #############################################################################
         self.chosenNet = None
         self.chosenSongAdress = None
 
         self.songAddressList = []
 
+        self.currentVocalsAudio = None
+        self.currentDrumsAudio = None
+        self.currentTotalAudio = None
+
+        self.player = QMediaPlayer()
+
         self.u_net_obj = Predict_U_Net()
 
+        #############################################################################
         # Signals and Slots
+        #############################################################################
         self.addSongPushButton.clicked.connect(self.addSong)
         self.processSongPushButton.clicked.connect(self.processSong)
+
+        # Buttons related to reproduce the music
+        self.playSongPushButton.clicked.connect(self.playSong)
 
     def addSong(self):
         """
@@ -51,25 +67,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.chosenNet = self.chooseNetComboBox.currentIndex()
         numberOfSong = self.songsListWidget.currentRow()
         self.chosenSongAdress = self.songAddressList[numberOfSong]
-        
 
+        # U-Net case
         if self.chosenNet == 0:
-            self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
+            self.currentVocalsAudio, self.currentDrumsAudio = \
+                self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
         
+        # OPEN-UNMIX case
         elif self.choseNet == 1:
             self.processWithOpen_Unmix()
 
 
-    def processWithU_Net(self):
+    def playSong(self):
         """
-        Process the chosen song with the trained U-Net architecture.
-        It will produce 2 tracks:
-            - Vocals
-            - Drums
-            - Others
+        Plays or pauses the resulting song
         """
-        return 0
+        self.currentTotalAudio = self.currentVocalsAudio * 1 + self.currentDrumsAudio * 1
 
+        self.currentTotalAudio = self.currentTotalAudio / np.max(np.abs(self.currentTotalAudio))
+
+        # Convert the NumPy array to bytes
+        audio_bytes = (self.currentTotalAudio * np.iinfo(np.int16).max).astype(np.int16).tobytes()
+
+        # Create a QBuffer and set the audio data
+        buffer = QBuffer()
+        buffer.setData(QByteArray(audio_bytes))
+        buffer.open(QIODevice.ReadOnly)
+
+        media_content = QMediaContent(QUrl.fromLocalFile(audio_bytes))
+        self.player.setMedia(media_content)
+
+        # Set the sample rate for the player
+        self.player.setPlaybackRate(self.u_net_obj.getSampleRate())
+
+        # Play the audio
+        self.player.play()
 
 
     
@@ -81,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             - Drums
             - Others
         """
-        return 0
+        print('Unmix not developed yet')
 
 
 
