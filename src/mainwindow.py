@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
-from src.Predict_U_Net import predictWithU_Net
+from src.Predict_U_Net import Predict_U_Net
 
 # Other modules
 import numpy as np
@@ -22,6 +22,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.chosenSongAdress = None
 
         self.songAddressList = []
+
+        self.u_net_obj = Predict_U_Net()
 
         # Signals and Slots
         self.addSongPushButton.clicked.connect(self.addSong)
@@ -52,7 +54,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
 
         if self.chosenNet == 0:
-            predictWithU_Net(self.chosenSongAdress)
+            self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
         
         elif self.choseNet == 1:
             self.processWithOpen_Unmix()

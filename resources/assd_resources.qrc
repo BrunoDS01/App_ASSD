@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="button_images">
+    <file>../assets/pause_simb.png</file>
+    <file>../assets/mute.png</file>
     <file>../assets/mas_simb.png</file>
+    <file>../assets/play_simb.png</file>
   </qresource>
 </RCC>
