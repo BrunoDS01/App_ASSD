@@ -7,12 +7,14 @@ from PyQt5.QtCore import QUrl
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
 from src.Predict_U_Net import Predict_U_Net
+from src.AudioPlayer import AudioPlayer
 
-# Other modules
+# External modules
 import numpy as np
-import scipy as sp
+from scipy.io import wavfile
 import os
-
+from librosa import resample
+import sounddevice as sd
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
@@ -32,7 +34,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.currentDrumsAudio = None
         self.currentTotalAudio = None
 
-        self.player = QMediaPlayer()
+        # self.player = QMediaPlayer()
+        self.audio_player = AudioPlayer()
 
         self.u_net_obj = Predict_U_Net()
 
@@ -45,6 +48,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Buttons related to reproduce the music
         self.playSongPushButton.clicked.connect(self.playSong)
 
+    #############################################################################
+    # Main Window Methods
+    #############################################################################
     def addSong(self):
         """
         Load a song from the computer. It will be added to the list of songs.
@@ -86,22 +92,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.currentTotalAudio = self.currentTotalAudio / np.max(np.abs(self.currentTotalAudio))
 
+        audioFinal = resample(self.currentTotalAudio, orig_sr = self.u_net_obj.getSampleRate(), target_sr=22050)
         # Convert the NumPy array to bytes
-        audio_bytes = (self.currentTotalAudio * np.iinfo(np.int16).max).astype(np.int16).tobytes()
+        #audio_bytes = (self.currentTotalAudio * np.iinfo(np.int16).max).astype(np.int16).tobytes()
 
-        # Create a QBuffer and set the audio data
-        buffer = QBuffer()
-        buffer.setData(QByteArray(audio_bytes))
-        buffer.open(QIODevice.ReadOnly)
+        #sd.play(audioFinal, samplerate=22050)
 
-        media_content = QMediaContent(QUrl.fromLocalFile(audio_bytes))
-        self.player.setMedia(media_content)
+        self.audio_player.play_audio(audioFinal, sample_rate=22050)
 
-        # Set the sample rate for the player
-        self.player.setPlaybackRate(self.u_net_obj.getSampleRate())
+        # # Create a QBuffer and set the audio data
+        # buffer = QBuffer()
+        # buffer.setData(QByteArray(audio_bytes))
+        # buffer.open(QIODevice.ReadOnly)
 
-        # Play the audio
-        self.player.play()
+        # self.player.setMedia(QMediaContent(), buffer)
+
+        # # Set the sample rate for the player
+        # self.player.setPlaybackRate(22050)
+
+        # # Play the audio
+        # self.player.play()
 
 
     
