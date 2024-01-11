@@ -1,3 +1,22 @@
+"""
+    Qué anda:
+        - Reproducir y pausar
+    Qué falta:
+        - Hacer que, al cambiar el volumen, siga desde donde arrancó
+        - El botón de stop
+        - Mostrar qué segundo de canción está
+        - Modificar qué lugar de la canción está
+        - Guardar el audio elegido
+        - Mostrar los espectrogramas
+
+        - Corregir error de, si no se elige una canción y se la intenta procesar.
+
+        - Hacer toda la parte de OPEN-UNMIX
+
+    Qué anda mal:
+        - Bass no anda (el entrenamiento y la red son malosss)
+"""
+
 # PyQt5 modules
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
@@ -8,13 +27,12 @@ from PyQt5.QtCore import QUrl
 from src.ui.mainwindow import Ui_MainWindow
 from src.Predict_U_Net import Predict_U_Net
 from src.AudioPlayer import AudioPlayer
+from src.Song import Song
 
 # External modules
 import numpy as np
 from scipy.io import wavfile
 import os
-from librosa import resample
-import sounddevice as sd
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
@@ -27,12 +45,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #############################################################################
         self.chosenNet = None
         self.chosenSongAdress = None
+        self.playing = False
+        self.paused = False
 
         self.songAddressList = []
 
-        self.currentVocalsAudio = None
-        self.currentDrumsAudio = None
         self.currentTotalAudio = None
+
+        self.currentSong = Song()
 
         # self.player = QMediaPlayer()
         self.audio_player = AudioPlayer()
@@ -46,6 +66,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.processSongPushButton.clicked.connect(self.processSong)
 
         # Buttons related to reproduce the music
+        self.changeVolumePushButton.clicked.connect(self.changeVolume)
         self.playSongPushButton.clicked.connect(self.playSong)
 
     #############################################################################
@@ -76,29 +97,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # U-Net case
         if self.chosenNet == 0:
-            self.currentVocalsAudio, self.currentDrumsAudio = \
-                self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
+            currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio\
+                = self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
+            
+            self.currentSong.setSongTracksData(totalAudio=currentTotalAudio,
+                                               vocalsAudio=currentVocalsAudio,
+                                               drumsAudio=currentDrumsAudio,
+                                               bassAudio=currentBassAudio)
         
         # OPEN-UNMIX case
         elif self.choseNet == 1:
             self.processWithOpen_Unmix()
 
+    def changeVolume(self):
+        self.currentSong.setTracksVolumes(vocalsVolume=self.vocalsVolumeHorizontalSlider.value(),
+                                                drumsVolume=self.drumsVolumeHorizontalSlider.value(),
+                                                bassVolume=self.bassVolumeHorizontalSlider.value(),
+                                                otherVolume=self.otherVolumeHorizontalSlider.value())
+            
+        self.currentTotalAudio = self.currentSong.getAudio()
 
-    def playSong(self):
-        """
-        Plays or pauses the resulting song
-        """
-        self.currentTotalAudio = self.currentVocalsAudio * 1 + self.currentDrumsAudio * 1
+        self.playing = False
 
-        self.currentTotalAudio = self.currentTotalAudio / np.max(np.abs(self.currentTotalAudio))
-
-        audioFinal = resample(self.currentTotalAudio, orig_sr = self.u_net_obj.getSampleRate(), target_sr=22050)
         # Convert the NumPy array to bytes
         #audio_bytes = (self.currentTotalAudio * np.iinfo(np.int16).max).astype(np.int16).tobytes()
 
         #sd.play(audioFinal, samplerate=22050)
-
-        self.audio_player.play_audio(audioFinal, sample_rate=22050)
 
         # # Create a QBuffer and set the audio data
         # buffer = QBuffer()
@@ -112,6 +136,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # # Play the audio
         # self.player.play()
+
+
+    def playSong(self):
+        """
+        Plays or pauses the resulting song
+        """
+        if not self.playing:
+            self.playing = True
+            self.audio_player.play_audio(self.currentTotalAudio, sample_rate=22050)
+        
+        else:
+            if self.paused:
+                self.paused = False
+                self.audio_player.resume_audio()
+
+            else:
+                self.paused = True
+                self.audio_player.pause_audio()
 
 
     

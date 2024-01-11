@@ -29,14 +29,24 @@ class AudioPlayer:
         if self.playing and not self.paused:
             self.paused = True
 
-    def resume_audio(self):
+    def resume_audio(self, sample_rate = None, audio_data=None):
+        """
+        The song can continue, and a new one, or an updated version of the song, can be loaded to be
+        continued where the previous one was left
+        """
         if self.playing and self.paused:
+            if sample_rate is not None:
+                self.sample_rate = sample_rate
+            if audio_data is not None:
+                self.audio_data = audio_data
+
             self.paused = False
 
     def _play_thread(self):
         pointer = 0
-        while pointer < len(self.audio_data) and self.playing:
+        while pointer < len(self.audio_data) + 102400 and self.playing:
             if not self.paused:
                 block = self.audio_data[pointer:pointer + 102400]
                 sd.play(block, samplerate=self.sample_rate, blocking=True)
                 pointer += len(block)
+        self.playing = False
