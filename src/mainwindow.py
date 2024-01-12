@@ -3,15 +3,17 @@
         - Reproducir y pausar
     Qué falta:
         - Hacer que, al cambiar el volumen, siga desde donde arrancó
+        - bOTÓN DE MUTE
         - El botón de stop
         - Mostrar qué segundo de canción está
         - Modificar qué lugar de la canción está
+
         - Guardar el audio elegido
         - Mostrar los espectrogramas
 
         - Corregir error de, si no se elige una canción y se la intenta procesar.
 
-        - Hacer toda la parte de OPEN-UNMIX
+        - Hacer toda la parte de OPEN-UNMIX: PRÁCTICAMENTE ESTÁ
 
     Qué anda mal:
         - Bass no anda (el entrenamiento y la red son malosss)
@@ -26,6 +28,7 @@ from PyQt5.QtCore import QUrl
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
 from src.Predict_U_Net import Predict_U_Net
+from src.Predict_Open_Unmix import Predict_Open_Unmix
 from src.AudioPlayer import AudioPlayer
 from src.Song import Song
 
@@ -58,6 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.audio_player = AudioPlayer()
 
         self.u_net_obj = Predict_U_Net()
+        self.open_unmix_obj = Predict_Open_Unmix()
 
         #############################################################################
         # Signals and Slots
@@ -95,21 +99,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         numberOfSong = self.songsListWidget.currentRow()
         self.chosenSongAdress = self.songAddressList[numberOfSong]
 
+        currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio = None, None, None, None, None
+
+        sample_rate = 44100
+
         # U-Net case
         if self.chosenNet == 0:
-            currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio\
+            currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio\
                 = self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
-            
-            self.currentSong.setSongTracksData(totalAudio=currentTotalAudio,
-                                               vocalsAudio=currentVocalsAudio,
-                                               drumsAudio=currentDrumsAudio,
-                                               bassAudio=currentBassAudio)
+            sample_rate = 8192
         
         # OPEN-UNMIX case
-        elif self.choseNet == 1:
-            self.processWithOpen_Unmix()
+        elif self.chosenNet == 1:
+            currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio\
+                  = self.open_unmix_obj.predictWithOpenUnmix(self.chosenSongAdress)
+            
+        self.currentSong.setSongTracksData(sample_rate = sample_rate,
+                                           totalAudio=currentTotalAudio,
+                                               vocalsAudio=currentVocalsAudio,
+                                               drumsAudio=currentDrumsAudio,
+                                               bassAudio=currentBassAudio,
+                                               otherAudio=currentOtherAudio)
+
 
     def changeVolume(self):
+        """
+        Change the volume of each track, depending on the sliders values.
+        """
         self.currentSong.setTracksVolumes(vocalsVolume=self.vocalsVolumeHorizontalSlider.value(),
                                                 drumsVolume=self.drumsVolumeHorizontalSlider.value(),
                                                 bassVolume=self.bassVolumeHorizontalSlider.value(),
@@ -122,7 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Convert the NumPy array to bytes
         #audio_bytes = (self.currentTotalAudio * np.iinfo(np.int16).max).astype(np.int16).tobytes()
 
-        #sd.play(audioFinal, samplerate=22050)
+        #sd.play(audioFinal, samplerate=44100)
 
         # # Create a QBuffer and set the audio data
         # buffer = QBuffer()
@@ -132,7 +148,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.player.setMedia(QMediaContent(), buffer)
 
         # # Set the sample rate for the player
-        # self.player.setPlaybackRate(22050)
+        # self.player.setPlaybackRate(44100)
 
         # # Play the audio
         # self.player.play()
@@ -144,7 +160,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if not self.playing:
             self.playing = True
-            self.audio_player.play_audio(self.currentTotalAudio, sample_rate=22050)
+            self.audio_player.play_audio(self.currentTotalAudio, sample_rate=44100)
         
         else:
             if self.paused:
@@ -154,18 +170,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 self.paused = True
                 self.audio_player.pause_audio()
-
-
-    
-    def processWithOpen_Unmix(self):
-        """
-        Process the chosen song with the trained U-Net architecture.
-        It will produce 2 tracks:
-            - Vocals
-            - Drums
-            - Others
-        """
-        print('Unmix not developed yet')
 
 
 

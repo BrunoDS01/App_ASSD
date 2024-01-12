@@ -16,11 +16,12 @@ class Song:
         self.audio = None
 
 
-    def setSongTracksData(self,
+    def setSongTracksData(self, sample_rate = 44100,
                             totalAudio = None,
                             vocalsAudio = None,
                             drumsAudio = None,
-                            bassAudio = None):
+                            bassAudio = None,
+                            otherAudio = None):
         """
         Load the tracks' audio
         """
@@ -36,12 +37,16 @@ class Song:
         if bassAudio is None:
             bassAudio = np.zeros(len(totalAudio))
 
+        if otherAudio is None:
+            otherAudio = np.zeros(len(totalAudio))
+
         self.totalAudio = totalAudio
         self.vocalsAudio = vocalsAudio
         self.drumsAudio = drumsAudio
         self.bassAudio = bassAudio          
+        self.otherAudio = otherAudio
 
-        self.otherAudio = self.totalAudio - self.vocalsAudio - self.drumsAudio - self.bassAudio
+        self.sample_rate = sample_rate
 
 
     def setTracksVolumes(self,
@@ -56,10 +61,15 @@ class Song:
 
 
         """
-        tempVocalsAudio = self.vocalsAudio * (1.05 ** (vocalsVolume) - 1) / 130.5
-        tempDrumsAudio = self.drumsAudio * (1.05 ** (drumsVolume) - 1) / 130.5
-        tempBassAudio = self.bassAudio * (1.05 ** (bassVolume) - 1) / 130.5
-        tempOtherAudio = self.otherAudio * (1.05 ** (otherVolume) - 1) / 130.5
+        # tempVocalsAudio = self.vocalsAudio * (1.05 ** (vocalsVolume) - 1) / 130.5
+        # tempDrumsAudio = self.drumsAudio * (1.05 ** (drumsVolume) - 1) / 130.5
+        # tempBassAudio = self.bassAudio * (1.05 ** (bassVolume) - 1) / 130.5
+        # tempOtherAudio = self.otherAudio * (1.05 ** (otherVolume) - 1) / 130.5
+
+        tempVocalsAudio = self.vocalsAudio * vocalsVolume / 100
+        tempDrumsAudio = self.drumsAudio * drumsVolume / 100
+        tempBassAudio = self.bassAudio * bassVolume / 100
+        tempOtherAudio = self.otherAudio * otherVolume / 100
 
         # Sum and normalize
 
@@ -68,15 +78,17 @@ class Song:
         self.audio = self.audio / np.max(np.abs(self.audio))
 
         # Apply master volume
-        self.audio = self.audio * ((1.05 ** (totalVolume) - 1) / 130.5)
+        #self.audio = self.audio * ((1.05 ** (totalVolume) - 1) / 130.5)
+        self.audio = self.audio * totalVolume / 100
 
-        # Resample audioto 22050 Hz
-        self.audio = resample(self.audio, orig_sr = 8196, target_sr=22050)
+        # Resample audioto 44100 Hz
+        if self.sample_rate != 44100:
+            self.audio = resample(self.audio, orig_sr =self.sample_rate, target_sr=44100)
 
     def getAudio(self):
         """
         Return the audio.
-        - Sample Rate = 22050 Hz
+        - Sample Rate = 44100 Hz
         """
         return self.audio
     
