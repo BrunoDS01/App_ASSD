@@ -1,9 +1,6 @@
 import numpy as np
 import librosa
-#from librosa.display import specshow
 import keras as keras
-import soundfile as sf
-import os
 
 SAMPLE_RATE=8192
 WINDOW_SIZE=1024

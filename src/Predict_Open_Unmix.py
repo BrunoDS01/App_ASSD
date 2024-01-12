@@ -1,11 +1,6 @@
 import torch
 import librosa
-import torchaudio
-import numpy as np
-import scipy
-import os
-from openunmix import umxl, predict
-from openunmix.utils import preprocess
+from openunmix import predict
 
 
 class Predict_Open_Unmix:
