@@ -10,7 +10,6 @@
         - Poner el nombre de la canción
         - Ojo con la manera de ver qué red se usa para cada canción (crear una variable que almacene eso)
 
-        - Guardar el audio elegido
         - Mostrar los espectrogramas
 
         - Ver si podemos hacer que arranque más rápido
