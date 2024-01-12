@@ -134,6 +134,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                drumsAudio=currentDrumsAudio,
                                                bassAudio=currentBassAudio,
                                                otherAudio=currentOtherAudio)
+        
+        filename = os.path.basename(self.chosenSongAdress)
+        self.chosenSongLabel.setText(filename)
 
 
     def changeVolume(self):
