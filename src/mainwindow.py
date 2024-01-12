@@ -7,8 +7,7 @@
         - El botón de stop
         - Mostrar qué segundo de canción está
         - Modificar qué lugar de la canción está
-        - Poner el nombre de la canción
-        - Ojo con la manera de ver qué red se usa para cada canción (crear una variable que almacene eso)
+        - Arreglar el tema del puntero y que se pase de la canción (o le falte)
 
         - Mostrar los espectrogramas
 
