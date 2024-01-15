@@ -3,8 +3,7 @@
         - Reproducir y pausar
 
     Qué falta:
-        - Hacer que, al cambiar el volumen, siga desde donde arrancó
-        - El botón de stop
+        - Al cerrar la app, deje de reproducirse la canción
         - Mostrar qué segundo de canción está
         - Modificar qué lugar de la canción está
         - Poner porcentaje de canción procesada
@@ -12,6 +11,7 @@
 
         - Mostrar los espectrogramas
 
+        - Permitir cargar canciones desde youtube
         - Ver si podemos hacer que arranque más rápido
 
         - Quedarme sólo con las funciones que uso de las librerías
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.currentSong = Song()
 
-        self.audio_player = AudioPlayer()
+        self.audio_player = AudioPlayer(callback=self.updateCurrentTime)
 
         self.u_net_obj = Predict_U_Net()
         self.open_unmix_obj = Predict_Open_Unmix()
@@ -75,6 +75,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.muteDrumsPushButton.clicked.connect(self.muteDrums)
         self.muteBassPushButton.clicked.connect(self.muteBass)
         self.muteOtherPushButton.clicked.connect(self.muteOther)
+
+        self.musicScrollerHorizontalSlider.sliderMoved.connect(self.timeChanged)
+        self.musicScrollerHorizontalSlider.sliderReleased.connect(self.changeAudioTime)
 
         self.playSongPushButton.clicked.connect(self.playSong)
 
@@ -135,9 +138,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                drumsAudio=currentDrumsAudio,
                                                bassAudio=currentBassAudio,
                                                otherAudio=currentOtherAudio)
-        
-        filename = os.path.basename(self.chosenSongAdress)
-        self.chosenSongLabel.setText(filename)
 
         self.newSongToProcess = True
 
@@ -150,7 +150,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.show_warning_popup("No ha procesado ningún audio")
             return
 
-        self.currentSong.setTracksVolumes(vocalsVolume=self.vocalsVolumeHorizontalSlider.value(),
+        self.currentSong.setTracksVolumes(totalVolume=self.globalVolumeHorizontalSlider.value(),
+                                          vocalsVolume=self.vocalsVolumeHorizontalSlider.value(),
                                                 drumsVolume=self.drumsVolumeHorizontalSlider.value(),
                                                 bassVolume=self.bassVolumeHorizontalSlider.value(),
                                                 otherVolume=self.otherVolumeHorizontalSlider.value())
@@ -158,6 +159,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.currentTotalAudio = self.currentSong.getAudio()
 
         self.volumesWereChanged = True
+
+        if not self.newSongToProcess:
+            self.audio_player.change_audio(self.currentTotalAudio, sample_rate=44100)
 
 
     def playSong(self):
@@ -168,25 +172,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.show_warning_popup("No ha procesado ningún audio")
             return
         
-        # If the song is new loaded:
-        if self.newSongToProcess:
+        # If the new song is loaded and processed:
+        if self.newSongToProcess and self.volumesWereChanged:
             self.newSongToProcess = False
             self.volumesWereChanged = False
-            self.audio_player.play_audio(self.currentTotalAudio, sample_rate=44100)
 
-        # If the song is the same as the previous one, but with other volume parameters:
-        if self.volumesWereChanged:
-            self.playing = False
+            filename = os.path.basename(self.chosenSongAdress)
+            self.chosenSongLabel.setText(filename)
+
+            self.audio_player.stop_audio()
             self.audio_player.play_audio(self.currentTotalAudio, sample_rate=44100)
-        
-        # If the song is the same as the previous one and the volumes were not changed:
+            self.changeAudioTotalDurationLabel()
+
+        # If a new song was loaded, but not processed
+        # Or         
+        # If the song is the same as the previous one
         else:
             if self.paused:
                 self.paused = False
+                self.playSongPushButton.setStyleSheet("image: url(:/button_images/assets/pause_simb.png);")
                 self.audio_player.resume_audio()
 
             else:
                 self.paused = True
+                self.playSongPushButton.setStyleSheet("image: url(:/button_images/assets/play_simb.png);")
                 self.audio_player.pause_audio()
 
 
@@ -258,6 +267,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         scaled_audio_data = (self.currentTotalAudio * 32767).astype(np.int16)
         write(file_path, 44100, scaled_audio_data)
 
+
+    def timeChanged(self, number):
+        totalTime = self.audio_player.getAudioTotalTime()
+
+        time = number / 3600 * totalTime
+        seconds = int(time % 60)
+        minutes = int(time // 60)
+
+        text = str(minutes) + ":" + str(seconds).zfill(2)
+
+        self.currentSongMinuteLabel.setText(text)
+
+    def changeAudioTotalDurationLabel(self):
+        time = self.audio_player.getAudioTotalTime()
+
+        seconds = int(time % 60)
+        minutes = int(time // 60)
+
+        text = str(minutes) + ":" + str(seconds).zfill(2)
+
+        self.totalSongDurationLabel.setText(text)
+
+
+    def updateCurrentTime(self, time):
+        if not self.musicScrollerHorizontalSlider.isSliderDown():
+            seconds = int(time % 60)
+            minutes = int(time // 60)
+
+            text = str(minutes) + ":" + str(seconds).zfill(2)
+
+            position = int(time / self.audio_player.getAudioTotalTime() * 3600)
+
+            self.currentSongMinuteLabel.setText(text)
+            self.musicScrollerHorizontalSlider.setValue(position)
+
+
+    def changeAudioTime(self):
+        self.audio_player.setAudioPlayedPercentage(self.musicScrollerHorizontalSlider.value() * 100 / 3600)
 
     def show_warning_popup(self, text):
         """

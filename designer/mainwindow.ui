@@ -128,7 +128,7 @@
          <widget class="QWidget" name="widget_3" native="true">
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="2" column="0">
-            <widget class="QLabel" name="currentSongMiniteLabel">
+            <widget class="QLabel" name="currentSongMinuteLabel">
              <property name="text">
               <string>00:00</string>
              </property>

@@ -89,7 +89,7 @@ class Predict_U_Net:
         drumsAudio = librosa.istft(drumsSpec * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
         bassAudio = librosa.istft(bassSpec * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
         totalAudio = librosa.istft(mix_wav_mag_full * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
-        otherAudio = vocalsAudio - drumsAudio - bassAudio - totalAudio
+        otherAudio = totalAudio - vocalsAudio - drumsAudio - bassAudio
 
         return vocalsAudio, vocalsAudio, drumsAudio, bassAudio, otherAudio
     

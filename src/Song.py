@@ -100,10 +100,10 @@ class Song:
 
         self.audio = (tempVocalsAudio + tempDrumsAudio + tempBassAudio + tempOtherAudio)
 
-        if np.max(np.abs(self.audio)) < np.finfo(float).eps:
-            self.audio = 0
-        else:
-            self.audio = self.audio / np.max(np.abs(self.audio))
+        # if np.max(np.abs(self.audio)) < np.finfo(float).eps:
+        #     self.audio = 0
+        # else:
+        #     self.audio = self.audio / np.max(np.abs(self.audio))
 
         # Apply master volume
         self.audio = self.audio * ((1.05 ** (totalVolume) - 1) / 130.5)
