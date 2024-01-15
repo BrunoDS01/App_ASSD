@@ -7,7 +7,8 @@
         - El botón de stop
         - Mostrar qué segundo de canción está
         - Modificar qué lugar de la canción está
-        - Arreglar el tema del puntero y que se pase de la canción (o le falte)
+        - Poner porcentaje de canción procesada
+        - Indicar que se procesó la canción (Tanto por la red, como por el volumen)
 
         - Mostrar los espectrogramas
 
@@ -46,7 +47,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #############################################################################
         self.chosenNet = None
         self.chosenSongAdress = None
-        self.playing = False
+        self.newSongToProcess = False
+        self.volumesWereChanged = False
         self.paused = False
         self.muteTracks = [False, False, False, False]
 
@@ -137,6 +139,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         filename = os.path.basename(self.chosenSongAdress)
         self.chosenSongLabel.setText(filename)
 
+        self.newSongToProcess = True
+
 
     def changeVolume(self):
         """
@@ -153,7 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
         self.currentTotalAudio = self.currentSong.getAudio()
 
-        self.playing = False
+        self.volumesWereChanged = True
 
 
     def playSong(self):
@@ -164,10 +168,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.show_warning_popup("No ha procesado ningún audio")
             return
         
-        if not self.playing:
-            self.playing = True
+        # If the song is new loaded:
+        if self.newSongToProcess:
+            self.newSongToProcess = False
+            self.volumesWereChanged = False
+            self.audio_player.play_audio(self.currentTotalAudio, sample_rate=44100)
+
+        # If the song is the same as the previous one, but with other volume parameters:
+        if self.volumesWereChanged:
+            self.playing = False
             self.audio_player.play_audio(self.currentTotalAudio, sample_rate=44100)
         
+        # If the song is the same as the previous one and the volumes were not changed:
         else:
             if self.paused:
                 self.paused = False
@@ -232,12 +244,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.currentTotalAudio is None:
             self.show_warning_popup("No ha procesado ningún audio")
             return
+        
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog  # Optional, but can be used to disable native dialogs on some platforms
         file_dialog = QFileDialog()
 
         default_file_name = "output.wav"
-        file_path, selected_filter = QFileDialog.getSaveFileName(None, "Save File", default_file_name, "WAV Files (*.wav);;All Files (*)", options=options)
+        file_path, _ = QFileDialog.getSaveFileName(None, "Save File", default_file_name, "WAV Files (*.wav);;All Files (*)", options=options)
         
         if file_path == '':
             return
@@ -247,6 +260,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def show_warning_popup(self, text):
+        """
+        Warning PopUp
+        """
         warning = QMessageBox()
         warning.setIcon(QMessageBox.Warning)
         warning.setWindowTitle("Warning")

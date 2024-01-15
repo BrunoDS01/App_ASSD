@@ -41,11 +41,18 @@ class AudioPlayer:
 
             self.paused = False
 
+        elif not self.playing:
+            self.play_audio(self, audio_data, sample_rate)
+
     def _play_thread(self):
         pointer = 0
-        while pointer < len(self.audio_data) + 102400 and self.playing:
+        while pointer < len(self.audio_data) and self.playing:
             if not self.paused:
-                block = self.audio_data[pointer:pointer + 102400]
+                end = pointer + 102400
+                if end > len(self.audio_data):
+                    end = len(self.audio_data)
+                block = self.audio_data[pointer:pointer + end]
                 sd.play(block, samplerate=self.sample_rate, blocking=True)
                 pointer += len(block)
         self.playing = False
+        self.paused = False
