@@ -3,13 +3,12 @@
         - Reproducir y pausar
 
     Qué falta:
+        - Mostrar los espectrogramas
+
         - Al cerrar la app, deje de reproducirse la canción
-        - Mostrar qué segundo de canción está
-        - Modificar qué lugar de la canción está
+
         - Poner porcentaje de canción procesada
         - Indicar que se procesó la canción (Tanto por la red, como por el volumen)
-
-        - Mostrar los espectrogramas
 
         - Permitir cargar canciones desde youtube
         - Ver si podemos hacer que arranque más rápido
