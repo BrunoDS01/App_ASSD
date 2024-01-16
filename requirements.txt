@@ -6,3 +6,4 @@ tensorflow
 soundfile
 sounddevice
 openunmix
+matplotlib
