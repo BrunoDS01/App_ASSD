@@ -11,7 +11,7 @@ class MplCanvas(FigureCanvas):
         super(MplCanvas, self).__init__(fig)
         self.navigationToolBar = NavigationToolbar(self, parent)
 
-class SpectogramPlot(MplCanvas):
+# class SpectogramPlot(MplCanvas):
 
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-        super(parent=None, width=5, height=4, dpi=100, self).__init__(*args, **kwargs)
+#     def __init__(self, parent=None, width=5, height=4, dpi=100):
+#         super(parent=None, width=5, height=4, dpi=100, self).__init__(*args, **kwargs)

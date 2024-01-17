@@ -7,8 +7,9 @@
 
         - Al cerrar la app, deje de reproducirse la canción
 
-        - Poner porcentaje de canción procesada
         - Indicar que se procesó la canción (Tanto por la red, como por el volumen)
+        - Que el usuario pueda elegir no procesar la red elegida (para evitar que procese algo que no quiero)
+
 
         - Permitir cargar canciones desde youtube
         - Ver si podemos hacer que arranque más rápido
@@ -119,6 +120,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio = None, None, None, None, None
 
         sample_rate = 44100
+        
+        # Show that the song will be processed
+        filename = os.path.basename(self.chosenSongAdress)
+        self.chosenSongLabel.setText(filename)
+
+        self.show_popup("A procesar " + filename)
 
         # U-Net case
         if self.chosenNet == 0:
@@ -137,6 +144,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                drumsAudio=currentDrumsAudio,
                                                bassAudio=currentBassAudio,
                                                otherAudio=currentOtherAudio)
+
+        self.proceesingLabel.setText(filename)
+
+        # Show that the song was processed
+        self.show_popup("Procesado! " + filename)
 
         self.newSongToProcess = True
 
@@ -312,6 +324,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         warning = QMessageBox()
         warning.setIcon(QMessageBox.Warning)
         warning.setWindowTitle("Warning")
+        warning.setText(text)
+        warning.setStandardButtons(QMessageBox.Ok)
+        warning.exec_()
+
+    def show_popup(self, text):
+        """
+        Warning PopUp
+        """
+        warning = QMessageBox()
+        warning.setWindowTitle("Atención")
         warning.setText(text)
         warning.setStandardButtons(QMessageBox.Ok)
         warning.exec_()

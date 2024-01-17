@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>728</width>
-    <height>604</height>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -124,7 +124,14 @@
         <string>Tracks</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="2" column="0">
+        <item row="4" column="0">
+         <widget class="QPushButton" name="saveSongPushButton">
+          <property name="text">
+           <string>Guardar canción procesada</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
          <widget class="QWidget" name="widget_3" native="true">
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="2" column="0">
@@ -190,33 +197,13 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QPushButton" name="saveSongPushButton">
-          <property name="text">
-           <string>Guardar canción procesada</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
+        <item row="1" column="0">
          <widget class="QStackedWidget" name="stackedWidget">
           <property name="currentIndex">
            <number>0</number>
           </property>
           <widget class="QWidget" name="page">
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="2">
-             <widget class="QSlider" name="vocalsVolumeHorizontalSlider">
-              <property name="maximum">
-               <number>100</number>
-              </property>
-              <property name="value">
-               <number>100</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="2">
              <widget class="QSlider" name="otherVolumeHorizontalSlider">
               <property name="maximum">
@@ -230,8 +217,15 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
-             <widget class="QSlider" name="drumsVolumeHorizontalSlider">
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Master</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QSlider" name="vocalsVolumeHorizontalSlider">
               <property name="maximum">
                <number>100</number>
               </property>
@@ -243,22 +237,31 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="0" colspan="3">
-             <widget class="QPushButton" name="changeVolumePushButton">
-              <property name="text">
-               <string>Procesar cambio de volúmenes</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Drums</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="2">
              <widget class="QSlider" name="bassVolumeHorizontalSlider">
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QPushButton" name="muteOtherPushButton">
+              <property name="styleSheet">
+               <string notr="true">image: url(:/button_images/assets/mute.png);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QSlider" name="drumsVolumeHorizontalSlider">
               <property name="maximum">
                <number>100</number>
               </property>
@@ -280,37 +283,10 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QPushButton" name="muteOtherPushButton">
-              <property name="styleSheet">
-               <string notr="true">image: url(:/button_images/assets/mute.png);</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="muteBassPushButton">
-              <property name="styleSheet">
-               <string notr="true">image: url(:/button_images/assets/mute.png);</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="label_3">
               <property name="text">
                <string>Vocals</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Other</string>
               </property>
              </widget>
             </item>
@@ -331,6 +307,30 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Drums</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0" colspan="3">
+             <widget class="QPushButton" name="changeVolumePushButton">
+              <property name="text">
+               <string>Procesar cambio de volúmenes</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="muteBassPushButton">
+              <property name="styleSheet">
+               <string notr="true">image: url(:/button_images/assets/mute.png);</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
             <item row="5" column="1" colspan="2">
              <widget class="QSlider" name="globalVolumeHorizontalSlider">
               <property name="value">
@@ -341,16 +341,23 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_8">
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_5">
               <property name="text">
-               <string>Master</string>
+               <string>Other</string>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
           <widget class="QWidget" name="page_2"/>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="proceesingLabel">
+          <property name="text">
+           <string/>
+          </property>
          </widget>
         </item>
        </layout>
