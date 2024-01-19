@@ -66,10 +66,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.u_net_obj = Predict_U_Net()
         self.open_unmix_obj = Predict_Open_Unmix()
 
-        self.spectogramPlot = SpectogramPlot()
+        self.vocalsSpectogramPlot = SpectogramPlot()
+        self.drumsSpectogramPlot = SpectogramPlot()
+        self.bassSpectogramPlot = SpectogramPlot()
+        self.othersSpectogramPlot = SpectogramPlot()
 
-        self.vocalsSpecVerticalLayout.addWidget(self.spectogramPlot.navigationToolBar)
-        self.vocalsSpecVerticalLayout.addWidget(self.spectogramPlot)
+        self.vocalsSpecVerticalLayout.addWidget(self.vocalsSpectogramPlot.navigationToolBar)
+        self.vocalsSpecVerticalLayout.addWidget(self.vocalsSpectogramPlot)
+
+        self.drumsSpecVerticalLayout.addWidget(self.drumsSpectogramPlot.navigationToolBar)
+        self.drumsSpecVerticalLayout.addWidget(self.drumsSpectogramPlot)
+
+        self.bassSpecVerticalLayout.addWidget(self.bassSpectogramPlot.navigationToolBar)
+        self.bassSpecVerticalLayout.addWidget(self.bassSpectogramPlot)
+
+        self.othersSpecVerticalLayout.addWidget(self.othersSpectogramPlot.navigationToolBar)
+        self.othersSpecVerticalLayout.addWidget(self.othersSpectogramPlot)
+        
 
         #############################################################################
         # Signals and Slots
