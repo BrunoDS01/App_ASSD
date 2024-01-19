@@ -5,6 +5,8 @@
     Qué falta:
         - Mostrar los espectrogramas
 
+        - Que se puedan cargar archivos mp3
+
         - Al cerrar la app, deje de reproducirse la canción
 
         - Indicar que se procesó la canción (Tanto por la red, como por el volumen)
@@ -30,6 +32,7 @@ from src.Predict_U_Net import Predict_U_Net
 from src.Predict_Open_Unmix import Predict_Open_Unmix
 from src.AudioPlayer import AudioPlayer
 from src.Song import Song
+from src.MPLClasses import SpectogramPlot
 
 # External modules
 import os
@@ -62,6 +65,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.u_net_obj = Predict_U_Net()
         self.open_unmix_obj = Predict_Open_Unmix()
+
+        self.spectogramPlot = SpectogramPlot()
+
+        self.vocalsSpecVerticalLayout.addWidget(self.spectogramPlot.navigationToolBar)
+        self.vocalsSpecVerticalLayout.addWidget(self.spectogramPlot)
 
         #############################################################################
         # Signals and Slots
