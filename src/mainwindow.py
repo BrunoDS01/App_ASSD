@@ -71,17 +71,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.bassSpectogramPlot = SpectogramPlot()
         self.othersSpectogramPlot = SpectogramPlot()
 
-        self.vocalsSpecVerticalLayout.addWidget(self.vocalsSpectogramPlot.navigationToolBar)
-        self.vocalsSpecVerticalLayout.addWidget(self.vocalsSpectogramPlot)
+        self.specVerticalLayout.addWidget(self.vocalsSpectogramPlot.navigationToolBar)
+        self.specVerticalLayout.addWidget(self.vocalsSpectogramPlot)
 
-        self.drumsSpecVerticalLayout.addWidget(self.drumsSpectogramPlot.navigationToolBar)
-        self.drumsSpecVerticalLayout.addWidget(self.drumsSpectogramPlot)
+        self.specVerticalLayout.addWidget(self.drumsSpectogramPlot.navigationToolBar)
+        self.specVerticalLayout.addWidget(self.drumsSpectogramPlot)
 
-        self.bassSpecVerticalLayout.addWidget(self.bassSpectogramPlot.navigationToolBar)
-        self.bassSpecVerticalLayout.addWidget(self.bassSpectogramPlot)
+        self.specVerticalLayout.addWidget(self.bassSpectogramPlot.navigationToolBar)
+        self.specVerticalLayout.addWidget(self.bassSpectogramPlot)
 
-        self.othersSpecVerticalLayout.addWidget(self.othersSpectogramPlot.navigationToolBar)
-        self.othersSpecVerticalLayout.addWidget(self.othersSpectogramPlot)
+        self.specVerticalLayout.addWidget(self.othersSpectogramPlot.navigationToolBar)
+        self.specVerticalLayout.addWidget(self.othersSpectogramPlot)
 
 
         #############################################################################

@@ -416,16 +416,7 @@
          <widget class="QWidget" name="widget_5" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <layout class="QVBoxLayout" name="vocalsSpecVerticalLayout"/>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="drumsSpecVerticalLayout"/>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="bassSpecVerticalLayout"/>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="othersSpecVerticalLayout"/>
+            <layout class="QVBoxLayout" name="specVerticalLayout"/>
            </item>
           </layout>
          </widget>
