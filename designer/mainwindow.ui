@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>728</width>
-    <height>604</height>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -359,18 +359,76 @@
        <attribute name="title">
         <string>Espectrogramas</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QVBoxLayout" name="vocalsSpecVerticalLayout"/>
+         <widget class="QWidget" name="widget_4" native="true">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>50</height>
+           </size>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="vocalsCheckBox">
+             <property name="text">
+              <string>Vocals</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="drumsCheckBox">
+             <property name="text">
+              <string>Drums</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="bassCheckBox">
+             <property name="text">
+              <string>Bass</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="othersCheckBox">
+             <property name="text">
+              <string>Others</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="drumsSpecVerticalLayout"/>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="bassSpecVerticalLayout"/>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="othersSpecVerticalLayout"/>
+         <widget class="QWidget" name="widget_5" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QVBoxLayout" name="vocalsSpecVerticalLayout"/>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="drumsSpecVerticalLayout"/>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="bassSpecVerticalLayout"/>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="othersSpecVerticalLayout"/>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>

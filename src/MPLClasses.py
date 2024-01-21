@@ -19,9 +19,18 @@ class SpectogramPlot(MplCanvas):
         super().__init__(parent=None, width=5, height=4, dpi=100)
 
     def plot(self, amplitudes, times, frequencies):
-        plt.pcolormesh(times, frequencies, 10 * np.log10(amplitudes), shading='auto', cmap='viridis')
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-        plt.title('Spectrogram of Audio Signal')
-        plt.colorbar(label='Intensity [dB]')
-        plt.show()
+        self.axes.pcolormesh(times, frequencies, 10 * np.log10(amplitudes), shading='auto', cmap='viridis')
+        self.axes.ylabel('Frequency [Hz]')
+        self.axes.xlabel('Time [sec]')
+        self.axes.title('Spectrogram of Audio Signal')
+        self.axes.colorbar(label='Intensity [dB]')
+        self.axes.show()
+
+    def showPlot(self):
+        self.show()
+        self.navigationToolBar.show()
+
+    def hidePlot(self):
+        self.hide()
+        self.navigationToolBar.hide()
+

@@ -82,13 +82,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.othersSpecVerticalLayout.addWidget(self.othersSpectogramPlot.navigationToolBar)
         self.othersSpecVerticalLayout.addWidget(self.othersSpectogramPlot)
-        
+
 
         #############################################################################
         # Signals and Slots
         #############################################################################
         self.addSongPushButton.clicked.connect(self.addSong)
         self.processSongPushButton.clicked.connect(self.processSong)
+
+        # Buttons to show spectograms
+        self.vocalsCheckBox.clicked.connect(self.updateShowSpectograms)
+        self.drumsCheckBox.clicked.connect(self.updateShowSpectograms)
+        self.bassCheckBox.clicked.connect(self.updateShowSpectograms)
+        self.othersCheckBox.clicked.connect(self.updateShowSpectograms)
 
         # Buttons related to reproduce the music
         self.changeVolumePushButton.clicked.connect(self.changeVolume)
@@ -349,6 +355,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         warning.setStandardButtons(QMessageBox.Ok)
         warning.exec_()
 
+
     def show_popup(self, text):
         """
         Warning PopUp
@@ -358,3 +365,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         warning.setText(text)
         warning.setStandardButtons(QMessageBox.Ok)
         warning.exec_()
+
+    #############################################################################
+    # Spectograms Methods
+    #############################################################################
+    def updateShowSpectograms(self):
+        if self.vocalsCheckBox.isChecked():
+            self.vocalsSpectogramPlot.showPlot()
+        else:
+            self.vocalsSpectogramPlot.hidePlot()
+
+        if self.drumsCheckBox.isChecked():
+            self.drumsSpectogramPlot.showPlot()
+        else:
+            self.drumsSpectogramPlot.hidePlot()
+        
+        if self.bassCheckBox.isChecked():
+            self.bassSpectogramPlot.showPlot()
+        else:
+            self.bassSpectogramPlot.hidePlot()
+        
+        if self.othersCheckBox.isChecked():
+            self.othersSpectogramPlot.showPlot()
+        else:
+            self.othersSpectogramPlot.hidePlot()
+        
