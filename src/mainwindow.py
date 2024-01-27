@@ -9,11 +9,10 @@
 
         - Al cerrar la app, deje de reproducirse la canción
 
-        - Indicar que se procesó la canción (Tanto por la red, como por el volumen)
-        - Que el usuario pueda elegir no procesar la red elegida (para evitar que procese algo que no quiero)
-
-
+        - Indicar que se procesó la canción (como por el volumen)
+        - Que el usuario pueda elegir no procesar la red elegida (pedir doble aceptación)
         - Permitir cargar canciones desde youtube
+        
         - Ver si podemos hacer que arranque más rápido
 
         - Quedarme sólo con las funciones que uso de las librerías
@@ -120,7 +119,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog  # Optional, but can be used to disable native dialogs on some platforms
         file_dialog = QFileDialog()
-        file_path, _ = file_dialog.getOpenFileName(self, 'Open File', '', 'WAV Files (*.wav);; All Files (*)', options=options)
+        file_path, _ = file_dialog.getOpenFileName(self, 'Open File', '', 'MP3 Files (*.mp3);; WAV Files (*.wav);; All Files (*)', options=options)
         if file_path == '':
             return
         
@@ -172,7 +171,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                bassAudio=currentBassAudio,
                                                otherAudio=currentOtherAudio)
 
-        self.proceesingLabel.setText(filename)
+        self.processingLabel.setText(filename)
 
         # Show that the song was processed
         self.show_popup("Procesado! " + filename)
