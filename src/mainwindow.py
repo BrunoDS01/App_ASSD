@@ -3,10 +3,12 @@
         - Reproducir y pausar
 
     Qué falta:
-        - Mostrar los espectrogramas
-        
-        - Al cerrar la app, deje de reproducirse la canción
+        - Ver el tema de espectrogramas del mismo tamaño
         - Permitir cargar canciones desde youtube
+
+        - Al cerrar la app, deje de reproducirse la canción
+
+        - Ver lo de la reproducción, que sea continua
 
         - Ver si podemos hacer que arranque más rápido
 
@@ -174,6 +176,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Show that the song was processed
         self.show_popup("Procesado! " + filename)
+
+        self.showSpectograms();
 
         self.newSongToProcess = True
 
@@ -350,6 +354,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def changeAudioTime(self):
         self.audio_player.setAudioPlayedPercentage(self.musicScrollerHorizontalSlider.value() * 100 / 3600)
 
+
+    #############################################################################
+    # Spectograms Methods
+    #############################################################################
+    def updateShowSpectograms(self):
+        if self.vocalsCheckBox.isChecked():
+            self.vocalsSpectogramPlot.showPlot()
+        else:
+            self.vocalsSpectogramPlot.hidePlot()
+
+        if self.drumsCheckBox.isChecked():
+            self.drumsSpectogramPlot.showPlot()
+        else:
+            self.drumsSpectogramPlot.hidePlot()
+        
+        if self.bassCheckBox.isChecked():
+            self.bassSpectogramPlot.showPlot()
+        else:
+            self.bassSpectogramPlot.hidePlot()
+        
+        if self.othersCheckBox.isChecked():
+            self.othersSpectogramPlot.showPlot()
+        else:
+            self.othersSpectogramPlot.hidePlot()
+
+
+    def showSpectograms(self):
+        self.vocalsSpectogramPlot.plot(self.currentSong.vocalsAudio, sample_rate = 44100)
+        self.drumsSpectogramPlot.plot(self.currentSong.drumsAudio, sample_rate = 44100)
+        self.bassSpectogramPlot.plot(self.currentSong.bassAudio, sample_rate = 44100)
+        self.othersSpectogramPlot.plot(self.currentSong.otherAudio, sample_rate = 44100)
+
+
+    #############################################################################
+    # Pop ups
+    #############################################################################
     def show_warning_popup(self, text):
         """
         Warning PopUp
@@ -375,7 +415,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def showMessageBox(self, title, message):
         """
-        Warning PopUp
+        Accept/Cancel pop up
         """
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Question)
@@ -384,29 +424,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
         msg_box.setDefaultButton(QMessageBox.Cancel)
 
-        return msg_box.exec_()
-
-    #############################################################################
-    # Spectograms Methods
-    #############################################################################
-    def updateShowSpectograms(self):
-        if self.vocalsCheckBox.isChecked():
-            self.vocalsSpectogramPlot.showPlot()
-        else:
-            self.vocalsSpectogramPlot.hidePlot()
-
-        if self.drumsCheckBox.isChecked():
-            self.drumsSpectogramPlot.showPlot()
-        else:
-            self.drumsSpectogramPlot.hidePlot()
-        
-        if self.bassCheckBox.isChecked():
-            self.bassSpectogramPlot.showPlot()
-        else:
-            self.bassSpectogramPlot.hidePlot()
-        
-        if self.othersCheckBox.isChecked():
-            self.othersSpectogramPlot.showPlot()
-        else:
-            self.othersSpectogramPlot.hidePlot()
-        
+        return msg_box.exec_()        
