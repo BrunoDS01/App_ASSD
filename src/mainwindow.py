@@ -4,15 +4,10 @@
 
     Qué falta:
         - Mostrar los espectrogramas
-
-        - Que se puedan cargar archivos mp3
-
-        - Al cerrar la app, deje de reproducirse la canción
-
-        - Indicar que se procesó la canción (como por el volumen)
-        - Que el usuario pueda elegir no procesar la red elegida (pedir doble aceptación)
-        - Permitir cargar canciones desde youtube
         
+        - Al cerrar la app, deje de reproducirse la canción
+        - Permitir cargar canciones desde youtube
+
         - Ver si podemos hacer que arranque más rápido
 
         - Quedarme sólo con las funciones que uso de las librerías
@@ -119,7 +114,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog  # Optional, but can be used to disable native dialogs on some platforms
         file_dialog = QFileDialog()
-        file_path, _ = file_dialog.getOpenFileName(self, 'Open File', '', 'MP3 Files (*.mp3);; WAV Files (*.wav);; All Files (*)', options=options)
+        file_path, _ = file_dialog.getOpenFileName(self, 'Open File', '', 'Audio Files (*.mp3 *.wav);; All Files (*)', options=options)
         if file_path == '':
             return
         
@@ -149,7 +144,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         # Show that the song will be processed
         filename = os.path.basename(self.chosenSongAdress)
-        self.chosenSongLabel.setText(filename)
+
+        result = self.showMessageBox("Procesar canción", "Está seguro de procesar " + filename)
+        
+        if result != QMessageBox.Yes:
+            return
 
         self.show_popup("A procesar " + filename)
 
@@ -197,8 +196,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.volumesWereChanged = True
 
+        filename = os.path.basename(self.chosenSongAdress)
+
         if not self.newSongToProcess:
             self.audio_player.change_audio(self.currentTotalAudio, sample_rate=44100)
+
+        else:
+            self.chosenSongLabel.setText(filename)
+
+        self.show_popup("Volúmenes cambiados " + filename)
 
 
     def playSong(self):
@@ -246,6 +252,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.muteVocalsPushButton.setStyleSheet("image: url(:/button_images/assets/mute.png);\n")
             self.muteTracks[0] = False
+
 
     def muteDrums(self):
         self.currentSong.muteUnmuteTrack(1)
@@ -364,6 +371,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         warning.setText(text)
         warning.setStandardButtons(QMessageBox.Ok)
         warning.exec_()
+
+
+    def showMessageBox(self, title, message):
+        """
+        Warning PopUp
+        """
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Question)
+        msg_box.setWindowTitle(title)
+        msg_box.setText(message)
+        msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        msg_box.setDefaultButton(QMessageBox.Cancel)
+
+        return msg_box.exec_()
 
     #############################################################################
     # Spectograms Methods
