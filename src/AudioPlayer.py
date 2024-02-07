@@ -25,6 +25,7 @@ class AudioPlayer:
         if self.playing:
             self.playing = False
             self.paused = False
+            self.pointer = len(self.audio_data) + 1
             self.thread.join()
 
     def pause_audio(self):

@@ -4,7 +4,6 @@
         - Permitir cargar canciones desde youtube
 
         - Al cerrar la app, deje de reproducirse la canción
-
         - Ver lo de la reproducción, que sea continua
 
         - Ver si podemos hacer que arranque más rápido
@@ -163,7 +162,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         filename = self.chosenSongAdress
         
         # Show that the song will be processed
-        if self.songIsYoutube[numberOfSong]:
+        if not self.songIsYoutube[numberOfSong]:
             filename = os.path.basename(self.chosenSongAdress)
         
 
@@ -445,3 +444,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         msg_box.setDefaultButton(QMessageBox.Cancel)
 
         return msg_box.exec_()        
+    
+    #############################################################################
+    # Shut Down
+    #############################################################################
+    def shutDown(self):
+        self.audio_player.stop_audio()
