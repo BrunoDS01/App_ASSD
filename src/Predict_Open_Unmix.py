@@ -2,6 +2,8 @@ import torch
 import librosa
 from openunmix import predict
 
+from src.youtubeDownloader import downloadYoutubeAudio
+
 
 class Predict_Open_Unmix:
     """
@@ -11,9 +13,13 @@ class Predict_Open_Unmix:
         use_cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if use_cuda else "cpu")
 
-    def predictWithOpenUnmix(self, songPath):
+    def predictWithOpenUnmix(self, songPath, youtube = False):
         # Load song
-        mix_wav, sr = librosa.load(songPath, sr=44100)
+        if not youtube:
+            mix_wav, sr = librosa.load(songPath, sr=44100)
+        else:
+            mix_wav, sr = downloadYoutubeAudio(songPath)
+
 
         estimates = predict.separate(
             torch.as_tensor(mix_wav).float(),

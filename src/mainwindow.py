@@ -1,7 +1,4 @@
 """
-    Qué anda:
-        - Reproducir y pausar
-
     Qué falta:
         - Ver el tema de espectrogramas del mismo tamaño
         - Permitir cargar canciones desde youtube
@@ -20,7 +17,7 @@
 """
 
 # PyQt5 modules
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QInputDialog
 
 # Project modules
 from src.ui.mainwindow import Ui_MainWindow
@@ -52,6 +49,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.muteTracks = [False, False, False, False]
 
         self.songAddressList = []
+        self.songIsYoutube = []
 
         self.currentTotalAudio = None
 
@@ -84,6 +82,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Signals and Slots
         #############################################################################
         self.addSongPushButton.clicked.connect(self.addSong)
+        #self.addSongYoutubePushButton.clicked.connect(self.addSongYoutube)
+
         self.processSongPushButton.clicked.connect(self.processSong)
 
         # Buttons to show spectograms
@@ -124,7 +124,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if file_path not in self.songAddressList:
             self.songAddressList.append(file_path)
+            self.songIsYoutube.append(False)
             self.songsListWidget.addItem(str(len(self.songAddressList) - 1) + ' - ' + filename)
+
+    def addSongYoutube(self):
+        """
+        Load a song from the computer. It will be added to the list of songs.
+        """
+        inputDialog = QInputDialog()
+        link, ok_pressed = inputDialog.getText(self, 'Enter Link', 'Link:')
+
+        if not ok_pressed:
+            return
+
+        if link not in self.songAddressList:
+            self.songAddressList.append(link)
+            self.songIsYoutube.append(True)
+            self.songsListWidget.addItem(str(len(self.songAddressList) - 1) + ' - ' + link)
 
 
     def processSong(self):
@@ -143,9 +159,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio = None, None, None, None, None
 
         sample_rate = 44100
+
+        filename = self.chosenSongAdress
         
         # Show that the song will be processed
-        filename = os.path.basename(self.chosenSongAdress)
+        if self.songIsYoutube[numberOfSong]:
+            filename = os.path.basename(self.chosenSongAdress)
+        
 
         result = self.showMessageBox("Procesar canción", "Está seguro de procesar " + filename)
         
@@ -157,13 +177,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # U-Net case
         if self.chosenNet == 0:
             currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio\
-                = self.u_net_obj.predictWithU_Net(self.chosenSongAdress)
+                = self.u_net_obj.predictWithU_Net(self.chosenSongAdress, self.songIsYoutube[numberOfSong])
             sample_rate = 8192
         
         # OPEN-UNMIX case
         elif self.chosenNet == 1:
             currentTotalAudio, currentVocalsAudio, currentDrumsAudio, currentBassAudio, currentOtherAudio\
-                  = self.open_unmix_obj.predictWithOpenUnmix(self.chosenSongAdress)
+                  = self.open_unmix_obj.predictWithOpenUnmix(self.chosenSongAdress, self.songIsYoutube[numberOfSong])
             
         self.currentSong.setSongTracksData(sample_rate = sample_rate,
                                            totalAudio=currentTotalAudio,
@@ -381,10 +401,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def showSpectograms(self):
-        self.vocalsSpectogramPlot.plot(self.currentSong.vocalsAudio, sample_rate = 44100)
-        self.drumsSpectogramPlot.plot(self.currentSong.drumsAudio, sample_rate = 44100)
-        self.bassSpectogramPlot.plot(self.currentSong.bassAudio, sample_rate = 44100)
-        self.othersSpectogramPlot.plot(self.currentSong.otherAudio, sample_rate = 44100)
+        self.vocalsSpectogramPlot.plot(self.currentSong.vocalsAudio, sample_rate = 44100, title="Vocals")
+        self.drumsSpectogramPlot.plot(self.currentSong.drumsAudio, sample_rate = 44100, title="Drums")
+        self.bassSpectogramPlot.plot(self.currentSong.bassAudio, sample_rate = 44100, title="Bass")
+        self.othersSpectogramPlot.plot(self.currentSong.otherAudio, sample_rate = 44100, title="Others")
 
 
     #############################################################################

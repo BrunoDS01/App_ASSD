@@ -18,13 +18,13 @@ class SpectogramPlot(MplCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         super().__init__(parent=None, width=5, height=4, dpi=100)
 
-    def plot(self, audio_data, sample_rate = 44100):
+    def plot(self, audio_data, sample_rate = 44100, title = ''):
         _ = self.axes.specgram(audio_data, Fs=sample_rate, cmap='viridis')
 
         # Adjust the plot settings for better visualization
         self.axes.set_xlabel('Time (s)')
         self.axes.set_ylabel('Frequency (Hz)')
-        self.axes.set_title('Spectrogram')
+        self.axes.set_title(title + ' ' + 'Spectrogram')
         # self.fig.colorbar(label='Amplitude (dB)')
         self.show()
         self.navigationToolBar.show()

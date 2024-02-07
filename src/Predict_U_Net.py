@@ -2,6 +2,8 @@ import numpy as np
 import librosa
 import keras as keras
 
+from src.youtubeDownloader import downloadYoutubeAudio
+
 SAMPLE_RATE=8192
 WINDOW_SIZE=1024
 HOP_LENGTH=768
@@ -22,7 +24,7 @@ class Predict_U_Net:
         self.model_bass = keras.models.load_model('src/models/vocal_PRUEBA_bass.h5')
 
 
-    def predictWithU_Net(self, songPath):
+    def predictWithU_Net(self, songPath, youtube = False):
         """
         Process the chosen song with the trained U-Net architecture.
         It will produce 4 tracks:
@@ -35,7 +37,12 @@ class Predict_U_Net:
         drumsSpec = None
 
         # Obtain spectrograms, downsampling to a sr = 8192
-        mix_wav, _ = librosa.load(songPath, sr=SAMPLE_RATE)
+        if not youtube:
+            mix_wav, _ = librosa.load(songPath, sr=SAMPLE_RATE)
+        else:
+             mix_wav, sr = downloadYoutubeAudio(songPath)
+             mix_wav = librosa.resample(y = mix_wav, orig_sr=sr, target_sr=SAMPLE_RATE)
+
         mix_wav_mag_full, mix_wav_phase_full = librosa.magphase(librosa.stft(mix_wav, n_fft=WINDOW_SIZE, hop_length=HOP_LENGTH))
 
         timeFrames = mix_wav_mag_full.shape[1]
@@ -96,14 +103,3 @@ class Predict_U_Net:
 
     def getSampleRate(self):
         return SAMPLE_RATE
-
-
-
-# spectrogram_db = librosa.power_to_db(X[0,:,:,0], ref=np.max)
-
-# # Display the spectrogram
-# plt.figure(figsize=(10, 6))
-# specshow(spectrogram_db, sr=SAMPLE_RATE)
-# plt.colorbar(format='%+2.0f dB')
-# plt.title('Spectrogram')
-# plt.show()

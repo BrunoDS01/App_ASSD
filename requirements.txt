@@ -7,3 +7,7 @@ soundfile
 sounddevice
 openunmix
 matplotlib
+youtube_dl
+stempeg
+ffmpeg
+pytube
