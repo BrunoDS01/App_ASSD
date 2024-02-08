@@ -19,7 +19,7 @@ class Predict_U_Net:
     """
     def __init__(self):
         # load saved models
-        self.model_vocals = keras.models.load_model('src/models/vocal_PRUEBA_vocals.h5')
+        self.model_vocals = keras.models.load_model('src/models/PRUEBA_vocals.h5')
         self.model_drums = keras.models.load_model('src/models/vocal_PRUEBA_drums.h5')
         self.model_bass = keras.models.load_model('src/models/vocal_PRUEBA_bass.h5')
 

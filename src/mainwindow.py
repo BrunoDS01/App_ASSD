@@ -1,10 +1,6 @@
 """
     Qué falta:
         - Ver el tema de espectrogramas del mismo tamaño
-        - Permitir cargar canciones desde youtube
-
-        - Al cerrar la app, deje de reproducirse la canción
-        - Ver lo de la reproducción, que sea continua
 
         - Ver si podemos hacer que arranque más rápido
 
