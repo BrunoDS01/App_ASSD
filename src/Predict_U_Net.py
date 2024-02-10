@@ -19,9 +19,10 @@ class Predict_U_Net:
     """
     def __init__(self):
         # load saved models
-        self.model_vocals = keras.models.load_model('src/models/PRUEBA_vocals.h5')
-        self.model_drums = keras.models.load_model('src/models/vocal_PRUEBA_drums.h5')
-        self.model_bass = keras.models.load_model('src/models/vocal_PRUEBA_bass.h5')
+        self.model_vocals = keras.models.load_model('src/models/vocals_end.h5')
+        self.model_drums = keras.models.load_model('src/models/drums_end.h5')
+        self.model_bass = keras.models.load_model('src/models/bass_end.h5')
+        self.model_other = keras.models.load_model('src/models/other_end.h5')
 
 
     def predictWithU_Net(self, songPath, youtube = False):
@@ -82,23 +83,31 @@ class Predict_U_Net:
             y_bass_p = self.model_bass.predict(X, batch_size=32)
             y_bass = np.vstack((np.zeros((128)), y_bass_p.reshape(512, 128)))
 
+            # predict other
+            y_other_p = self.model_other.predict(X, batch_size=32)
+            y_other = np.vstack((np.zeros((128)), y_other_p.reshape(512, 128)))
+
             if START == 0:
                 vocalsSpec = y_vocals
                 drumsSpec = y_drums
                 bassSpec = y_bass
+                otherSpec = y_other
             else: 
                 vocalsSpec = np.concatenate((vocalsSpec, y_vocals), axis=1)
                 drumsSpec = np.concatenate((drumsSpec, y_drums), axis=1)
                 bassSpec = np.concatenate((bassSpec, y_bass), axis=1)
+                otherSpec = np.concatenate((otherSpec, y_other), axis=1)
                 
         # obtain audio, using the original phase and aplying ISTFT
         vocalsAudio = librosa.istft(vocalsSpec * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH) 
         drumsAudio = librosa.istft(drumsSpec * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
         bassAudio = librosa.istft(bassSpec * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
-        totalAudio = librosa.istft(mix_wav_mag_full * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
-        otherAudio = totalAudio - vocalsAudio - drumsAudio - bassAudio
+        otherAudio = librosa.istft(otherSpec * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
+        #totalAudio = librosa.istft(mix_wav_mag_full * mix_wav_phase_full, win_length=WINDOW_SIZE, hop_length=HOP_LENGTH)
+        totalAudio = vocalsAudio + drumsAudio + bassAudio + otherAudio
+        #otherAudio = totalAudio - vocalsAudio - drumsAudio - bassAudio
 
-        return vocalsAudio, vocalsAudio, drumsAudio, bassAudio, otherAudio
+        return totalAudio, vocalsAudio, drumsAudio, bassAudio, otherAudio
     
 
     def getSampleRate(self):

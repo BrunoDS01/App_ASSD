@@ -72,15 +72,15 @@ class Song:
         # Apply volume to each track
         if self.emptySong:
             return
-        tempVocalsAudio = self.vocalsAudio * (1.05 ** (vocalsVolume) - 1) / 130.5
-        tempDrumsAudio = self.drumsAudio * (1.05 ** (drumsVolume) - 1) / 130.5
-        tempBassAudio = self.bassAudio * (1.05 ** (bassVolume) - 1) / 130.5
-        tempOtherAudio = self.otherAudio * (1.05 ** (otherVolume) - 1) / 130.5
+        #tempVocalsAudio = self.vocalsAudio * (1.05 ** (vocalsVolume) - 1) / 130.5
+        #tempDrumsAudio = self.drumsAudio * (1.05 ** (drumsVolume) - 1) / 130.5
+        #tempBassAudio = self.bassAudio * (1.05 ** (bassVolume) - 1) / 130.5
+        #tempOtherAudio = self.otherAudio * (1.05 ** (otherVolume) - 1) / 130.5
 
-        # tempVocalsAudio = self.vocalsAudio * vocalsVolume / 100
-        # tempDrumsAudio = self.drumsAudio * drumsVolume / 100
-        # tempBassAudio = self.bassAudio * bassVolume / 100
-        # tempOtherAudio = self.otherAudio * otherVolume / 100
+        tempVocalsAudio = self.vocalsAudio * vocalsVolume / 100 * 1.25
+        tempDrumsAudio = self.drumsAudio * drumsVolume / 100 * 1.25
+        tempBassAudio = self.bassAudio * bassVolume / 100 * 1.25
+        tempOtherAudio = self.otherAudio * otherVolume / 100 * 1.25
 
         # See if the track is mute or not
 
@@ -106,8 +106,8 @@ class Song:
         #     self.audio = self.audio / np.max(np.abs(self.audio))
 
         # Apply master volume
-        self.audio = self.audio * ((1.05 ** (totalVolume) - 1) / 130.5)
-        # self.audio = self.audio * totalVolume / 100
+        # self.audio = self.audio * ((1.05 ** (totalVolume) - 1) / 130.5)
+        self.audio = self.audio * totalVolume / 100 * 1.25
 
         # Resample audioto 44100 Hz
         if self.sample_rate != 44100:
