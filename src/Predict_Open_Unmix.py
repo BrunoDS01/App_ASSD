@@ -23,6 +23,7 @@ class Predict_Open_Unmix:
 
         estimates = predict.separate(
             torch.as_tensor(mix_wav).float(),
+            #model_str_or_path = "umxhq",
             rate=sr,
             device=self.device
         )
